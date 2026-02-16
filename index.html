@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Apps My Dream Store - Download Amazing Apps</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Poppins', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .floating { animation: float 3s ease-in-out infinite; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navbar -->
+    <nav class="fixed w-full bg-white/90 backdrop-blur-md shadow-sm z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center">
+                    <i class="fas fa-mobile-alt text-3xl text-indigo-600 mr-2"></i>
+                    <span class="text-2xl font-bold text-gray-800">My Apps My Dream</span>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#apps" class="text-gray-600 hover:text-indigo-600 font-medium">My Apps My Dream</a>
+                    <a href="#submit-idea" class="text-gray-600 hover:text-indigo-600 font-medium">Submit Idea</a>
+                    <a href="#reward" class="text-gray-600 hover:text-indigo-600 font-medium">Reward</a>
+                </div>
+                <button id="mobile-menu-btn" class="md:hidden text-gray-600">
+                    <i class="fas fa-bars text-2xl"></i>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+            <a href="#apps" class="block px-4 py-2 text-gray-600 hover:bg-indigo-50">My Apps My Dream</a>
+            <a href="#submit-idea" class="block px-4 py-2 text-gray-600 hover:bg-indigo-50">Submit Idea</a>
+            <a href="#reward" class="block px-4 py-2 text-gray-600 hover:bg-indigo-50">Reward</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg min-h-screen flex items-center pt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="text-white">
+                    <h1 class="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+                        Awesome Apps for Everyone!
+                    </h1>
+                    <p class="text-xl mb-8 text-white/90">
+                        Download my carefully crafted apps. Have an idea? Share it with me and earn <span class="font-bold text-yellow-300">₹10,000</span> if I build it!
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="#apps" class="bg-white text-indigo-600 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition shadow-lg text-center">
+                            <i class="fas fa-download mr-2"></i>Download Apps
+                        </a>
+                        <a href="#submit-idea" class="bg-transparent border-2 border-white text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-white/10 transition text-center">
+                            <i class="fas fa-lightbulb mr-2"></i>Submit Idea
+                        </a>
+                    </div>
+                    <div class="mt-8 flex items-center gap-6">
+                        <div class="text-center">
+                            <p class="text-3xl font-bold">10+</p>
+                            <p class="text-sm text-white/80">Apps Built</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-3xl font-bold">50K+</p>
+                            <p class="text-sm text-white/80">Downloads</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-3xl font-bold">₹10K</p>
+                            <p class="text-sm text-white/80">Reward</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-center">
+                    <div class="floating">
+                        <img src="images/app-preview.png" alt="App Preview" class="rounded-3xl shadow-2xl w-64">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- My Apps My Dream Section -->
+    <section id="apps" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">My Apps My Dream</h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Download these amazing apps that solve real problems. More apps coming soon!
+                </p>
+            </div>
+
+            <!-- Apps Container - Dynamic from Firebase -->
+            <div id="appsContainer" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="col-span-full text-center py-12">
+                    <i class="fas fa-spinner fa-spin text-4xl text-indigo-600 mb-4"></i>
+                    <p class="text-gray-500">Loading apps...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Reward Section -->
+    <section id="reward" class="py-20 bg-gradient-to-r from-yellow-400 to-orange-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="text-white">
+                    <h2 class="text-4xl font-bold mb-6">
+                        <i class="fas fa-trophy mr-3"></i>₹10,000 Reward Program
+                    </h2>
+                    <p class="text-xl mb-6">
+                        Koi problem hai jo solve karni hai? Mujhe batao! Agar maine app bana di to aapko <strong>₹10,000</strong> cash reward!
+                    </p>
+                    <ul class="space-y-3 text-lg">
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle mr-3 text-green-800"></i>
+                            Real problem submit karo
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle mr-3 text-green-800"></i>
+                            Main app banaunga
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check-circle mr-3 text-green-800"></i>
+                            App publish hone par ₹10,000 paao!
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-white rounded-2xl p-8 shadow-2xl">
+                    <div class="text-center">
+                        <i class="fas fa-gift text-6xl text-orange-500 mb-4"></i>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Real Example</h3>
+                        <p class="text-gray-600 mb-4">
+                            "Editors ko editing material dhundhne me time lagta hai"
+                        </p>
+                        <div class="bg-green-100 rounded-lg p-4 mb-4">
+                            <p class="text-green-800 font-bold">
+                                <i class="fas fa-check mr-2"></i>Result: Edit Library App Built!
+                            </p>
+                        </div>
+                        <p class="text-gray-500 text-sm">
+                            Isi tarah aap bhi idea do, main app banaunga!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Submit Idea Section -->
+    <section id="submit-idea" class="py-20 bg-gray-50">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">Submit Your Idea</h2>
+                <p class="text-xl text-gray-600">
+                    Koi problem hai jo app se solve ho sakti hai? Mujhe likho!
+                </p>
+            </div>
+
+            <form id="ideaForm" class="bg-white rounded-2xl shadow-lg p-8">
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-user mr-2"></i>Aapka Naam
+                    </label>
+                    <input type="text" id="name" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition" placeholder="Aapka naam likho">
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-envelope mr-2"></i>Email ya Phone
+                    </label>
+                    <input type="text" id="contact" required class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition" placeholder="Email ya phone number">
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-lightbulb mr-2"></i>App Idea / Problem
+                    </label>
+                    <textarea id="idea" required rows="5" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition" placeholder="Batao ki kya problem hai aur kaise app solve kar sakta hai...&#10;&#10;Example: Editors ko alag alag websites se material dhundhna padta hai, ek app ho jisme sab kuch ho!"></textarea>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-star mr-2"></i>Kitne logon ko ye problem hai? (Estimate)
+                    </label>
+                    <select id="audience" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition">
+                        <option value="100-1000">100-1,000 log</option>
+                        <option value="1000-10000">1,000-10,000 log</option>
+                        <option value="10000-100000">10,000-1,00,000 log</option>
+                        <option value="100000+">1,00,000+ log</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="w-full bg-indigo-600 text-white py-4 rounded-lg font-bold text-lg hover:bg-indigo-700 transition flex items-center justify-center">
+                    <i class="fas fa-paper-plane mr-2"></i>Submit Idea
+                </button>
+
+                <p class="text-center text-gray-500 text-sm mt-4">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    Agar idea pasand aaya to main aapko contact karunga!
+                </p>
+            </form>
+
+            <!-- Success Message (Hidden by default) -->
+            <div id="successMessage" class="hidden bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mt-6 text-center">
+                <i class="fas fa-check-circle text-2xl mb-2"></i>
+                <p class="font-bold">Thank you!</p>
+                <p>Aapka idea receive ho gaya hai. Main jaldi review karke aapko contact karunga!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-bold text-center text-gray-800 mb-16">Kaam Kaise Hota Hai</h2>
+            
+            <div class="grid md:grid-cols-4 gap-8">
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-edit text-2xl text-indigo-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">1. Idea Submit Karo</h3>
+                    <p class="text-gray-600">Problem batao aur solution suggest karo</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-search text-2xl text-purple-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">2. Main Review Karunga</h3>
+                    <p class="text-gray-600">Idea ki possibility check karunga</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-code text-2xl text-pink-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">3. App Banaunga</h3>
+                    <p class="text-gray-600">Pasand aaya to app develop karunga</p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-money-bill-wave text-2xl text-green-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">4. ₹10,000 Prize!</h3>
+                    <p class="text-gray-600">Publish hone par reward milega!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-mobile-alt text-3xl text-indigo-400 mr-2"></i>
+                        <span class="text-2xl font-bold">My Apps My Dream</span>
+                    </div>
+                    <p class="text-gray-400">
+                        Quality apps for everyone. Download, use, and share ideas!
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="about.html" class="hover:text-white transition">About Us</a></li>
+                        <li><a href="#apps" class="hover:text-white transition">Download Apps</a></li>
+                        <li><a href="#submit-idea" class="hover:text-white transition">Submit Idea</a></li>
+                        <li><a href="#reward" class="hover:text-white transition">₹10K Reward</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Legal</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="privacy.html" class="hover:text-white transition">Privacy Policy</a></li>
+                        <li><a href="terms.html" class="hover:text-white transition">Terms & Conditions</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Admin</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="admin-panel.html" class="hover:text-white transition"><i class="fas fa-shield-alt mr-2"></i>Admin Panel</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Contact</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><i class="fas fa-envelope mr-2"></i>Freefiretv581@gmail.com</li>
+                        <li><i class="fas fa-phone mr-2"></i>+91-XXXXXXXXXX</li>
+                    </ul>
+                    <div class="flex space-x-4 mt-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-instagram text-2xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-youtube text-2xl"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition"><i class="fab fa-twitter text-2xl"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2025 My Apps My Dream. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
+    <script src="script.js"></script>
+</body>
+</html>

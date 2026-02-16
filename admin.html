@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Submitted Ideas | My Apps My Dream</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Poppins', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navbar -->
+    <nav class="fixed w-full bg-white/90 backdrop-blur-md shadow-sm z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center">
+                    <i class="fas fa-shield-alt text-3xl text-indigo-600 mr-2"></i>
+                    <span class="text-xl font-bold text-gray-800">Admin Dashboard</span>
+                </div>
+                <a href="index.html" class="text-indigo-600 hover:text-indigo-800 font-medium">
+                    <i class="fas fa-home mr-1"></i>Back to Website
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-20 pb-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Header -->
+            <div class="gradient-bg rounded-2xl p-8 mb-8 text-white">
+                <h1 class="text-3xl font-bold mb-2">
+                    <i class="fas fa-lightbulb mr-2"></i>Submitted Ideas
+                </h1>
+                <p class="text-white/80">All app ideas submitted by users from Firebase Database</p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="grid md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl shadow p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Total Submissions</p>
+                            <p class="text-3xl font-bold text-indigo-600" id="totalCount">0</p>
+                        </div>
+                        <i class="fas fa-inbox text-4xl text-indigo-200"></i>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Pending</p>
+                            <p class="text-3xl font-bold text-yellow-600" id="pendingCount">0</p>
+                        </div>
+                        <i class="fas fa-clock text-4xl text-yellow-200"></i>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Approved</p>
+                            <p class="text-3xl font-bold text-green-600" id="approvedCount">0</p>
+                        </div>
+                        <i class="fas fa-check-circle text-4xl text-green-200"></i>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Reward Given</p>
+                            <p class="text-3xl font-bold text-purple-600" id="rewardCount">0</p>
+                        </div>
+                        <i class="fas fa-gift text-4xl text-purple-200"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="flex flex-wrap gap-3 mb-6">
+                <button onclick="filterSubmissions('all')" class="px-4 py-2 rounded-full bg-indigo-600 text-white hover:bg-indigo-700 transition">
+                    <i class="fas fa-list mr-1"></i>All
+                </button>
+                <button onclick="filterSubmissions('pending')" class="px-4 py-2 rounded-full bg-yellow-100 text-yellow-700 hover:bg-yellow-200 transition">
+                    <i class="fas fa-clock mr-1"></i>Pending
+                </button>
+                <button onclick="filterSubmissions('reviewing')" class="px-4 py-2 rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 transition">
+                    <i class="fas fa-search mr-1"></i>Reviewing
+                </button>
+                <button onclick="filterSubmissions('approved')" class="px-4 py-2 rounded-full bg-green-100 text-green-700 hover:bg-green-200 transition">
+                    <i class="fas fa-check mr-1"></i>Approved
+                </button>
+                <button onclick="filterSubmissions('completed')" class="px-4 py-2 rounded-full bg-purple-100 text-purple-700 hover:bg-purple-200 transition">
+                    <i class="fas fa-trophy mr-1"></i>Reward Given
+                </button>
+                <button onclick="loadSubmissions()" class="px-4 py-2 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition ml-auto">
+                    <i class="fas fa-sync mr-1"></i>Refresh
+                </button>
+            </div>
+
+            <!-- Apps Management Section -->
+            <div class="bg-white rounded-xl shadow overflow-hidden mb-8">
+                <div class="p-6 border-b bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h2 class="text-2xl font-bold">
+                                <i class="fas fa-mobile-alt mr-2"></i>Apps Management
+                            </h2>
+                            <p class="text-white/80 mt-1">Manage your 3 apps - Title, Image URL, Download Link</p>
+                        </div>
+                        <button onclick="openAppModal()" class="bg-white text-indigo-600 px-4 py-2 rounded-lg font-bold hover:bg-gray-100 transition">
+                            <i class="fas fa-plus mr-2"></i>Add App
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="appsList" class="p-6">
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-spinner fa-spin text-3xl mb-2"></i>
+                        <p>Loading apps...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submissions Table -->
+            <div class="bg-white rounded-xl shadow overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Idea</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Audience</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="submissionsTable" class="divide-y divide-gray-200">
+                            <tr>
+                                <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                                    <i class="fas fa-spinner fa-spin text-3xl mb-2"></i>
+                                    <p>Loading submissions from Firebase...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Empty State (Hidden by default) -->
+            <div id="emptyState" class="hidden text-center py-12">
+                <i class="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
+                <h3 class="text-xl font-medium text-gray-600">No submissions yet</h3>
+                <p class="text-gray-500">Ideas will appear here when users submit them</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
+    <script>
+        // ============================================
+        // AUTHENTICATION CHECK - Must be logged in
+        // ============================================
+        (function checkAuth() {
+            const isAuthenticated = localStorage.getItem('adminAuthenticated') === 'true';
+            const loginTime = localStorage.getItem('adminLoginTime');
+            const oneHour = 3600000; // 1 hour in milliseconds
+            
+            // Check if authenticated and within 1 hour
+            if (!isAuthenticated || !loginTime || (Date.now() - parseInt(loginTime)) > oneHour) {
+                // Clear old auth data
+                localStorage.removeItem('adminAuthenticated');
+                localStorage.removeItem('adminLoginTime');
+                // Redirect to login page
+                window.location.href = 'admin-panel.html';
+            }
+        })();
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCR4mJrZQNUqF59HNPYKdv_mBYDnBf2t1I",
+            authDomain: "my-apps-my-dream-2006.firebaseapp.com",
+            projectId: "my-apps-my-dream-2006",
+            storageBucket: "my-apps-my-dream-2006.firebasestorage.app",
+            messagingSenderId: "254858137509",
+            appId: "1:254858137509:web:407bf8a16627299fd1224c",
+            measurementId: "G-3S6PKTCFGE"
+        };
+
+        // Initialize Firebase
+        let db;
+        let allSubmissions = [];
+        
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+            console.log('%c🔥 Firebase Connected!', 'color: #ff9800; font-weight: bold;');
+        } catch (error) {
+            console.error('Firebase error:', error);
+        }
+
+        // Load all submissions
+        async function loadSubmissions() {
+            if (!db) {
+                document.getElementById('submissionsTable').innerHTML = `
+                    <tr>
+                        <td colspan="7" class="px-6 py-12 text-center text-red-500">
+                            <i class="fas fa-exclamation-circle text-3xl mb-2"></i>
+                            <p>Firebase not connected. Check your configuration.</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            try {
+                const snapshot = await db.collection('ideaSubmissions')
+                    .orderBy('submittedAtTimestamp', 'desc')
+                    .get();
+                
+                allSubmissions = [];
+                snapshot.forEach(doc => {
+                    allSubmissions.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+
+                updateStats();
+                displaySubmissions(allSubmissions);
+                
+                console.log('✅ Loaded', allSubmissions.length, 'submissions');
+            } catch (error) {
+                console.error('Error loading:', error);
+                document.getElementById('submissionsTable').innerHTML = `
+                    <tr>
+                        <td colspan="7" class="px-6 py-12 text-center text-red-500">
+                            <i class="fas fa-exclamation-circle text-3xl mb-2"></i>
+                            <p>Error loading data: ${error.message}</p>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // Update statistics
+        function updateStats() {
+            const total = allSubmissions.length;
+            const pending = allSubmissions.filter(s => s.status === 'pending').length;
+            const approved = allSubmissions.filter(s => s.status === 'approved').length;
+            const completed = allSubmissions.filter(s => s.status === 'completed').length;
+
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('pendingCount').textContent = pending;
+            document.getElementById('approvedCount').textContent = approved;
+            document.getElementById('rewardCount').textContent = completed;
+        }
+
+        // Display submissions in table
+        function displaySubmissions(submissions) {
+            const table = document.getElementById('submissionsTable');
+            const emptyState = document.getElementById('emptyState');
+
+            if (submissions.length === 0) {
+                table.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            table.innerHTML = submissions.map(sub => {
+                const date = sub.submittedAt ? new Date(sub.submittedAt).toLocaleString('hi-IN') : 'N/A';
+                const statusColors = {
+                    'pending': 'bg-yellow-100 text-yellow-800',
+                    'reviewing': 'bg-blue-100 text-blue-800',
+                    'approved': 'bg-green-100 text-green-800',
+                    'rejected': 'bg-red-100 text-red-800',
+                    'completed': 'bg-purple-100 text-purple-800'
+                };
+                const statusClass = statusColors[sub.status] || statusColors['pending'];
+
+                return `
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${date}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${sub.name || 'N/A'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${sub.contact || 'N/A'}</td>
+                        <td class="px-6 py-4 text-sm text-gray-600 max-w-xs">
+                            <div class="truncate" title="${sub.idea || ''}">${sub.idea || 'N/A'}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${sub.audience || 'N/A'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-3 py-1 rounded-full text-xs font-medium ${statusClass}">
+                                ${sub.status || 'pending'}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <select onchange="updateStatus('${sub.id}', this.value)" 
+                                    class="border border-gray-300 rounded-lg px-2 py-1 text-sm focus:outline-none focus:border-indigo-500">
+                                <option value="pending" ${sub.status === 'pending' ? 'selected' : ''}>🕐 Pending</option>
+                                <option value="reviewing" ${sub.status === 'reviewing' ? 'selected' : ''}>🔍 Reviewing</option>
+                                <option value="approved" ${sub.status === 'approved' ? 'selected' : ''}>✅ Approved</option>
+                                <option value="rejected" ${sub.status === 'rejected' ? 'selected' : ''}>❌ Rejected</option>
+                                <option value="completed" ${sub.status === 'completed' ? 'selected' : ''}>🏆 Reward Given</option>
+                            </select>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Filter submissions
+        function filterSubmissions(filter) {
+            if (filter === 'all') {
+                displaySubmissions(allSubmissions);
+            } else {
+                const filtered = allSubmissions.filter(s => s.status === filter);
+                displaySubmissions(filtered);
+            }
+        }
+
+        // Update status
+        async function updateStatus(id, newStatus) {
+            if (!db) {
+                alert('Firebase not connected!');
+                return;
+            }
+
+            try {
+                await db.collection('ideaSubmissions').doc(id).update({
+                    status: newStatus,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                // Update local data
+                const submission = allSubmissions.find(s => s.id === id);
+                if (submission) {
+                    submission.status = newStatus;
+                }
+                
+                updateStats();
+                
+                // Show success notification
+                const notification = document.createElement('div');
+                notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+                notification.innerHTML = '<i class="fas fa-check mr-2"></i>Status updated!';
+                document.body.appendChild(notification);
+                
+                setTimeout(() => notification.remove(), 3000);
+                
+                console.log('✅ Status updated:', id, '→', newStatus);
+            } catch (error) {
+                console.error('Error updating:', error);
+                alert('Error updating status: ' + error.message);
+            }
+        }
+
+        // Load on page load
+        document.addEventListener('DOMContentLoaded', loadSubmissions);
+
+        // Auto refresh every 30 seconds
+        setInterval(loadSubmissions, 30000);
+
+        // ============================================
+        // APPS MANAGEMENT FUNCTIONS
+        // ============================================
+        
+        let editingAppId = null;
+        let allApps = [];
+
+        // Load all apps
+        async function loadApps() {
+            if (!db) return;
+            
+            try {
+                const snapshot = await db.collection('apps').orderBy('order', 'asc').get();
+                allApps = [];
+                snapshot.forEach(doc => {
+                    allApps.push({ id: doc.id, ...doc.data() });
+                });
+                displayApps();
+                console.log('✅ Loaded', allApps.length, 'apps');
+            } catch (error) {
+                console.error('Error loading apps:', error);
+            }
+        }
+
+        // Display apps in list
+        function displayApps() {
+            const container = document.getElementById('appsList');
+            
+            if (allApps.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-box-open text-4xl mb-2"></i>
+                        <p>No apps yet. Click "Add App" to create your first app!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = allApps.map((app, index) => `
+                <div class="flex items-center gap-4 p-4 border rounded-lg mb-4 hover:bg-gray-50">
+                    <div class="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
+                        ${app.imageUrl ? 
+                            `<img src="${app.imageUrl}" class="w-full h-full object-cover">` :
+                            `<div class="w-full h-full bg-gradient-to-br ${app.gradient || 'from-indigo-400 to-purple-600'} flex items-center justify-center">
+                                <i class="${app.icon || 'fas fa-mobile-alt'} text-white text-xl"></i>
+                            </div>`
+                        }
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-gray-800">${app.name}</h3>
+                        <p class="text-sm text-gray-500 truncate">${app.description || 'No description'}</p>
+                        <div class="flex gap-2 mt-1">
+                            <span class="text-xs bg-gray-100 px-2 py-1 rounded">Order: ${app.order || index + 1}</span>
+                            ${app.downloadLink ? '<span class="text-xs bg-green-100 text-green-600 px-2 py-1 rounded">Download Ready</span>' : '<span class="text-xs bg-yellow-100 text-yellow-600 px-2 py-1 rounded">No Link</span>'}
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="editApp('${app.id}')" class="px-3 py-2 bg-blue-100 text-blue-600 rounded hover:bg-blue-200">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button onclick="deleteApp('${app.id}')" class="px-3 py-2 bg-red-100 text-red-600 rounded hover:bg-red-200">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Open modal
+        function openAppModal() {
+            editingAppId = null;
+            document.getElementById('modalTitle').textContent = 'Add New App';
+            document.getElementById('appForm').reset();
+            document.getElementById('appModal').classList.remove('hidden');
+        }
+
+        // Close modal
+        function closeAppModal() {
+            document.getElementById('appModal').classList.add('hidden');
+            editingAppId = null;
+        }
+
+        // Edit app
+        function editApp(id) {
+            const app = allApps.find(a => a.id === id);
+            if (!app) return;
+            
+            editingAppId = id;
+            document.getElementById('modalTitle').textContent = 'Edit App';
+            document.getElementById('appName').value = app.name || '';
+            document.getElementById('appDescription').value = app.description || '';
+            document.getElementById('appImageUrl').value = app.imageUrl || '';
+            document.getElementById('appDownloadLink').value = app.downloadLink || '';
+            document.getElementById('appIcon').value = app.icon || 'fas fa-mobile-alt';
+            document.getElementById('appGradient').value = app.gradient || 'from-indigo-400 to-purple-600';
+            document.getElementById('appTags').value = (app.tags || []).join(', ');
+            document.getElementById('appDownloads').value = app.downloads || '0';
+            document.getElementById('appOrder').value = app.order || 1;
+            
+            document.getElementById('appModal').classList.remove('hidden');
+        }
+
+        // Save app
+        async function saveApp(e) {
+            e.preventDefault();
+            if (!db) return;
+
+            const appData = {
+                name: document.getElementById('appName').value,
+                description: document.getElementById('appDescription').value,
+                imageUrl: document.getElementById('appImageUrl').value,
+                downloadLink: document.getElementById('appDownloadLink').value,
+                icon: document.getElementById('appIcon').value,
+                gradient: document.getElementById('appGradient').value,
+                tags: document.getElementById('appTags').value.split(',').map(t => t.trim()).filter(t => t),
+                downloads: document.getElementById('appDownloads').value,
+                order: parseInt(document.getElementById('appOrder').value) || 1,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            try {
+                if (editingAppId) {
+                    await db.collection('apps').doc(editingAppId).update(appData);
+                    showNotification('App updated successfully!');
+                } else {
+                    appData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    await db.collection('apps').add(appData);
+                    showNotification('App created successfully!');
+                }
+                closeAppModal();
+                loadApps();
+            } catch (error) {
+                console.error('Error saving app:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        // Delete app
+        async function deleteApp(id) {
+            if (!confirm('Are you sure you want to delete this app?')) return;
+            if (!db) return;
+
+            try {
+                await db.collection('apps').doc(id).delete();
+                showNotification('App deleted!');
+                loadApps();
+            } catch (error) {
+                console.error('Error deleting app:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        // Show notification
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+            notification.innerHTML = `<i class="fas fa-check mr-2"></i>${message}`;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        // Load apps on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSubmissions();
+            loadApps();
+        });
+    </script>
+
+    <!-- App Modal -->
+    <div id="appModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b">
+                <h3 id="modalTitle" class="text-2xl font-bold text-gray-800">Add New App</h3>
+            </div>
+            <form id="appForm" onsubmit="saveApp(event)" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-gray-700 font-medium mb-1">App Name</label>
+                    <input type="text" id="appName" required class="w-full px-3 py-2 border rounded-lg focus:border-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-medium mb-1">Description</label>
+                    <textarea id="appDescription" rows="2" class="w-full px-3 py-2 border rounded-lg focus:border-indigo-500 outline-none"></textarea>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-medium mb-1">Image URL (from GitHub)</label>
+                    <input type="url" id="appImageUrl" placeholder="https://raw.githubusercontent.com/..." class="w-full px-3 py-2 border rounded-lg focus:border-indigo-500 outline-none">
+                    <p class="text-xs text-gray-500 mt-1">Leave empty to use icon + gradient</p>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-medium mb-1">Download Link (Play Store/App Store)</label>
+                    <input type="url" id="appDownloadLink" placeholder="https://play.google.com/store/apps/..." class="w-full px-3 py-2 border rounded-lg focus:border-indigo-500 outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-1">Icon Class</label>
+                        <input type="text" id="appIcon" value="fas fa-mobile-alt" class="w-full px-3 py-2 border rounded-lg focus:border-indigo-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-1">Gradient</label>
+                        <select id="appGradient" class="w-full px-3 py-2 border rounded-lg focus:border-indigo-500 outline-none">
+                            <option value="from-pink-400 to-purple-600">Pink-Purple</option>
+                            <option value="from-blue-400 to-cyan-600">Blue-Cyan</option>
+                            <option value="from-green-400 to-teal-600">Green-Teal</option>
+                            <option value="from-orange-400 to-red-600">Orange-Red</option>
+                            <option value="from-indigo-400 to-purple-600">Indigo-Purple</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-medium mb-1">Tags (comma separated)</label>
+                    <input type="text" id="appTags" placeholder="Video Editing, Free, Tools" class="w-full px-3 py-2 border rounded-lg focus:border-indigo-500 outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-1">Downloads Count</label>
+                        <input type="text" id="appDownloads" value="25K" class="w-full px-3 py-2 border rounded-lg focus:border-indigo-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-1">Display Order</label>
+                        <input type="number" id="appOrder" value="1" min="1" max="3" class="w-full px-3 py-2 border rounded-lg focus:border-indigo-500 outline-none">
+                    </div>
+                </div>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="closeAppModal()" class="flex-1 px-4 py-2 border rounded-lg hover:bg-gray-50">Cancel</button>
+                    <button type="submit" class="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Save App</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
