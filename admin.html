@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Submitted Ideas | My Apps My Dream</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Poppins', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navbar -->
+    <nav class="fixed w-full bg-white/90 backdrop-blur-md shadow-sm z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center">
+                    <i class="fas fa-shield-alt text-3xl text-indigo-600 mr-2"></i>
+                    <span class="text-xl font-bold text-gray-800">Admin Dashboard</span>
+                </div>
+                <a href="index.html" class="text-indigo-600 hover:text-indigo-800 font-medium">
+                    <i class="fas fa-home mr-1"></i>Back to Website
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-20 pb-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Header -->
+            <div class="gradient-bg rounded-2xl p-8 mb-8 text-white">
+                <h1 class="text-3xl font-bold mb-2">
+                    <i class="fas fa-lightbulb mr-2"></i>Submitted Ideas
+                </h1>
+                <p class="text-white/80">All app ideas submitted by users from Firebase Database</p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="grid md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl shadow p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Total Submissions</p>
+                            <p class="text-3xl font-bold text-indigo-600" id="totalCount">0</p>
+                        </div>
+                        <i class="fas fa-inbox text-4xl text-indigo-200"></i>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Pending</p>
+                            <p class="text-3xl font-bold text-yellow-600" id="pendingCount">0</p>
+                        </div>
+                        <i class="fas fa-clock text-4xl text-yellow-200"></i>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Approved</p>
+                            <p class="text-3xl font-bold text-green-600" id="approvedCount">0</p>
+                        </div>
+                        <i class="fas fa-check-circle text-4xl text-green-200"></i>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-500 text-sm">Reward Given</p>
+                            <p class="text-3xl font-bold text-purple-600" id="rewardCount">0</p>
+                        </div>
+                        <i class="fas fa-gift text-4xl text-purple-200"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Buttons -->
+            <div class="flex flex-wrap gap-3 mb-6">
+                <button onclick="filterSubmissions('all')" class="px-4 py-2 rounded-full bg-indigo-600 text-white hover:bg-indigo-700 transition">
+                    <i class="fas fa-list mr-1"></i>All
+                </button>
+                <button onclick="filterSubmissions('pending')" class="px-4 py-2 rounded-full bg-yellow-100 text-yellow-700 hover:bg-yellow-200 transition">
+                    <i class="fas fa-clock mr-1"></i>Pending
+                </button>
+                <button onclick="filterSubmissions('reviewing')" class="px-4 py-2 rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200 transition">
+                    <i class="fas fa-search mr-1"></i>Reviewing
+                </button>
+                <button onclick="filterSubmissions('approved')" class="px-4 py-2 rounded-full bg-green-100 text-green-700 hover:bg-green-200 transition">
+                    <i class="fas fa-check mr-1"></i>Approved
+                </button>
+                <button onclick="filterSubmissions('completed')" class="px-4 py-2 rounded-full bg-purple-100 text-purple-700 hover:bg-purple-200 transition">
+                    <i class="fas fa-trophy mr-1"></i>Reward Given
+                </button>
+                <button onclick="loadSubmissions()" class="px-4 py-2 rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 transition ml-auto">
+                    <i class="fas fa-sync mr-1"></i>Refresh
+                </button>
+            </div>
+
+            <!-- Submissions Table -->
+            <div class="bg-white rounded-xl shadow overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Idea</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Audience</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="submissionsTable" class="divide-y divide-gray-200">
+                            <tr>
+                                <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                                    <i class="fas fa-spinner fa-spin text-3xl mb-2"></i>
+                                    <p>Loading submissions from Firebase...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Empty State (Hidden by default) -->
+            <div id="emptyState" class="hidden text-center py-12">
+                <i class="fas fa-inbox text-6xl text-gray-300 mb-4"></i>
+                <h3 class="text-xl font-medium text-gray-600">No submissions yet</h3>
+                <p class="text-gray-500">Ideas will appear here when users submit them</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCR4mJrZQNUqF59HNPYKdv_mBYDnBf2t1I",
+            authDomain: "my-apps-my-dream-2006.firebaseapp.com",
+            projectId: "my-apps-my-dream-2006",
+            storageBucket: "my-apps-my-dream-2006.firebasestorage.app",
+            messagingSenderId: "254858137509",
+            appId: "1:254858137509:web:407bf8a16627299fd1224c",
+            measurementId: "G-3S6PKTCFGE"
+        };
+
+        // Initialize Firebase
+        let db;
+        let allSubmissions = [];
+        
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.firestore();
+            console.log('%c🔥 Firebase Connected!', 'color: #ff9800; font-weight: bold;');
+        } catch (error) {
+            console.error('Firebase error:', error);
+        }
+
+        // Load all submissions
+        async function loadSubmissions() {
+            if (!db) {
+                document.getElementById('submissionsTable').innerHTML = `
+                    <tr>
+                        <td colspan="7" class="px-6 py-12 text-center text-red-500">
+                            <i class="fas fa-exclamation-circle text-3xl mb-2"></i>
+                            <p>Firebase not connected. Check your configuration.</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            try {
+                const snapshot = await db.collection('ideaSubmissions')
+                    .orderBy('submittedAtTimestamp', 'desc')
+                    .get();
+                
+                allSubmissions = [];
+                snapshot.forEach(doc => {
+                    allSubmissions.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+
+                updateStats();
+                displaySubmissions(allSubmissions);
+                
+                console.log('✅ Loaded', allSubmissions.length, 'submissions');
+            } catch (error) {
+                console.error('Error loading:', error);
+                document.getElementById('submissionsTable').innerHTML = `
+                    <tr>
+                        <td colspan="7" class="px-6 py-12 text-center text-red-500">
+                            <i class="fas fa-exclamation-circle text-3xl mb-2"></i>
+                            <p>Error loading data: ${error.message}</p>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // Update statistics
+        function updateStats() {
+            const total = allSubmissions.length;
+            const pending = allSubmissions.filter(s => s.status === 'pending').length;
+            const approved = allSubmissions.filter(s => s.status === 'approved').length;
+            const completed = allSubmissions.filter(s => s.status === 'completed').length;
+
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('pendingCount').textContent = pending;
+            document.getElementById('approvedCount').textContent = approved;
+            document.getElementById('rewardCount').textContent = completed;
+        }
+
+        // Display submissions in table
+        function displaySubmissions(submissions) {
+            const table = document.getElementById('submissionsTable');
+            const emptyState = document.getElementById('emptyState');
+
+            if (submissions.length === 0) {
+                table.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            table.innerHTML = submissions.map(sub => {
+                const date = sub.submittedAt ? new Date(sub.submittedAt).toLocaleString('hi-IN') : 'N/A';
+                const statusColors = {
+                    'pending': 'bg-yellow-100 text-yellow-800',
+                    'reviewing': 'bg-blue-100 text-blue-800',
+                    'approved': 'bg-green-100 text-green-800',
+                    'rejected': 'bg-red-100 text-red-800',
+                    'completed': 'bg-purple-100 text-purple-800'
+                };
+                const statusClass = statusColors[sub.status] || statusColors['pending'];
+
+                return `
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${date}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${sub.name || 'N/A'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${sub.contact || 'N/A'}</td>
+                        <td class="px-6 py-4 text-sm text-gray-600 max-w-xs">
+                            <div class="truncate" title="${sub.idea || ''}">${sub.idea || 'N/A'}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${sub.audience || 'N/A'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-3 py-1 rounded-full text-xs font-medium ${statusClass}">
+                                ${sub.status || 'pending'}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <select onchange="updateStatus('${sub.id}', this.value)" 
+                                    class="border border-gray-300 rounded-lg px-2 py-1 text-sm focus:outline-none focus:border-indigo-500">
+                                <option value="pending" ${sub.status === 'pending' ? 'selected' : ''}>🕐 Pending</option>
+                                <option value="reviewing" ${sub.status === 'reviewing' ? 'selected' : ''}>🔍 Reviewing</option>
+                                <option value="approved" ${sub.status === 'approved' ? 'selected' : ''}>✅ Approved</option>
+                                <option value="rejected" ${sub.status === 'rejected' ? 'selected' : ''}>❌ Rejected</option>
+                                <option value="completed" ${sub.status === 'completed' ? 'selected' : ''}>🏆 Reward Given</option>
+                            </select>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Filter submissions
+        function filterSubmissions(filter) {
+            if (filter === 'all') {
+                displaySubmissions(allSubmissions);
+            } else {
+                const filtered = allSubmissions.filter(s => s.status === filter);
+                displaySubmissions(filtered);
+            }
+        }
+
+        // Update status
+        async function updateStatus(id, newStatus) {
+            if (!db) {
+                alert('Firebase not connected!');
+                return;
+            }
+
+            try {
+                await db.collection('ideaSubmissions').doc(id).update({
+                    status: newStatus,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                // Update local data
+                const submission = allSubmissions.find(s => s.id === id);
+                if (submission) {
+                    submission.status = newStatus;
+                }
+                
+                updateStats();
+                
+                // Show success notification
+                const notification = document.createElement('div');
+                notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+                notification.innerHTML = '<i class="fas fa-check mr-2"></i>Status updated!';
+                document.body.appendChild(notification);
+                
+                setTimeout(() => notification.remove(), 3000);
+                
+                console.log('✅ Status updated:', id, '→', newStatus);
+            } catch (error) {
+                console.error('Error updating:', error);
+                alert('Error updating status: ' + error.message);
+            }
+        }
+
+        // Load on page load
+        document.addEventListener('DOMContentLoaded', loadSubmissions);
+
+        // Auto refresh every 30 seconds
+        setInterval(loadSubmissions, 30000);
+    </script>
+</body>
+</html>
