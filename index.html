@@ -99,80 +99,11 @@
                 </p>
             </div>
 
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Edit Library App -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden card-hover border border-gray-100">
-                    <div class="h-48 bg-gradient-to-br from-pink-400 to-purple-600 flex items-center justify-center">
-                        <i class="fas fa-film text-6xl text-white"></i>
-                    </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <h3 class="text-2xl font-bold text-gray-800">Edit Library</h3>
-                            <span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-sm font-medium">
-                                <i class="fas fa-ad mr-1"></i>Free
-                            </span>
-                        </div>
-                        <p class="text-gray-600 mb-4">
-                            Editors ke liye special! Sare editing materials ek jagah - transitions, effects, sounds, aur bhi bahut kuch!
-                        </p>
-                        <div class="flex flex-wrap gap-2 mb-4">
-                            <span class="bg-indigo-100 text-indigo-600 px-3 py-1 rounded-full text-xs">Video Editing</span>
-                            <span class="bg-purple-100 text-purple-600 px-3 py-1 rounded-full text-xs">Materials</span>
-                            <span class="bg-pink-100 text-pink-600 px-3 py-1 rounded-full text-xs">Free Resources</span>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <div class="text-sm text-gray-500">
-                                <i class="fas fa-download mr-1"></i> 25K+ Downloads
-                            </div>
-                            <button onclick="downloadApp('edit-library')" class="bg-indigo-600 text-white px-6 py-2 rounded-full hover:bg-indigo-700 transition flex items-center">
-                                <i class="fas fa-download mr-2"></i>Download
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Coming Soon Card 1 -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden card-hover border border-gray-100">
-                    <div class="h-48 bg-gradient-to-br from-blue-400 to-cyan-600 flex items-center justify-center">
-                        <i class="fas fa-clock text-6xl text-white"></i>
-                    </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <h3 class="text-2xl font-bold text-gray-800">Coming Soon</h3>
-                            <span class="bg-yellow-100 text-yellow-600 px-3 py-1 rounded-full text-sm font-medium">Soon</span>
-                        </div>
-                        <p class="text-gray-600 mb-4">
-                            Exciting new app in development. Stay tuned for amazing features!
-                        </p>
-                        <div class="flex flex-wrap gap-2 mb-4">
-                            <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs">Coming Soon</span>
-                        </div>
-                        <button class="w-full bg-gray-200 text-gray-600 px-6 py-2 rounded-full cursor-not-allowed">
-                            <i class="fas fa-clock mr-2"></i>Coming Soon
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Coming Soon Card 2 -->
-                <div class="bg-white rounded-2xl shadow-lg overflow-hidden card-hover border border-gray-100">
-                    <div class="h-48 bg-gradient-to-br from-green-400 to-teal-600 flex items-center justify-center">
-                        <i class="fas fa-rocket text-6xl text-white"></i>
-                    </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <h3 class="text-2xl font-bold text-gray-800">Coming Soon</h3>
-                            <span class="bg-yellow-100 text-yellow-600 px-3 py-1 rounded-full text-sm font-medium">Soon</span>
-                        </div>
-                        <p class="text-gray-600 mb-4">
-                            Another amazing app is being built. Your idea could be next!
-                        </p>
-                        <div class="flex flex-wrap gap-2 mb-4">
-                            <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs">Coming Soon</span>
-                        </div>
-                        <button class="w-full bg-gray-200 text-gray-600 px-6 py-2 rounded-full cursor-not-allowed">
-                            <i class="fas fa-clock mr-2"></i>Coming Soon
-                        </button>
-                    </div>
+            <!-- Apps Container - Dynamic from Firebase -->
+            <div id="appsContainer" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="col-span-full text-center py-12">
+                    <i class="fas fa-spinner fa-spin text-4xl text-indigo-600 mb-4"></i>
+                    <p class="text-gray-500">Loading apps...</p>
                 </div>
             </div>
         </div>

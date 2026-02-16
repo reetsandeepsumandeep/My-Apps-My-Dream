@@ -54,6 +54,9 @@ service cloud.firestore {
     match /ideaSubmissions/{document} {
       allow read, write: if true;
     }
+    match /apps/{document} {
+      allow read, write: if true;
+    }
   }
 }
 ```

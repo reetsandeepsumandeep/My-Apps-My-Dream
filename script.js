@@ -1,8 +1,6 @@
 // ============================================
 // FIREBASE CONFIGURATION
 // ============================================
-// IMPORTANT: Replace this with your actual Firebase config
-// from Firebase Console -> Project Settings -> Your Apps -> Config
 const firebaseConfig = {
     apiKey: "AIzaSyCR4mJrZQNUqF59HNPYKdv_mBYDnBf2t1I",
     authDomain: "my-apps-my-dream-2006.firebaseapp.com",
@@ -240,6 +238,112 @@ async function updateSubmissionStatus(submissionId, status) {
         return false;
     }
 }
+
+// ============================================
+// APPS MANAGEMENT - DYNAMIC FROM FIREBASE
+// ============================================
+
+// Fetch and display apps
+async function loadApps() {
+    if (!db) {
+        console.error('Firebase not connected');
+        return;
+    }
+
+    try {
+        const snapshot = await db.collection('apps')
+            .orderBy('order', 'asc')
+            .get();
+
+        const apps = [];
+        snapshot.forEach(doc => {
+            apps.push({
+                id: doc.id,
+                ...doc.data()
+            });
+        });
+
+        renderApps(apps);
+        console.log('✅ Loaded', apps.length, 'apps');
+    } catch (error) {
+        console.error('Error loading apps:', error);
+        showDefaultApps();
+    }
+}
+
+// Render apps in the container
+function renderApps(apps) {
+    const container = document.getElementById('appsContainer');
+
+    if (!apps || apps.length === 0) {
+        container.innerHTML = `
+            <div class="col-span-full text-center py-12">
+                <i class="fas fa-box-open text-4xl text-gray-300 mb-4"></i>
+                <p class="text-gray-500">No apps available yet.</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = apps.map(app => {
+        const hasDownload = app.downloadLink && app.downloadLink.trim() !== '';
+
+        return `
+            <div class="bg-white rounded-2xl shadow-lg overflow-hidden card-hover border border-gray-100">
+                <div class="h-48 bg-gradient-to-br ${app.gradient || 'from-indigo-400 to-purple-600'} flex items-center justify-center overflow-hidden relative rounded-t-2xl">
+                    ${app.imageUrl ? 
+                        `<img src="${app.imageUrl}" alt="${app.name}" class="w-full h-full object-contain rounded-xl">` :
+                        `<i class="${app.icon || 'fas fa-mobile-alt'} text-6xl text-white"></i>`
+                    }
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-2xl font-bold text-gray-800">${app.name || 'App Name'}</h3>
+                        <span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-sm font-medium">
+                            <i class="fas fa-ad mr-1"></i>Free
+                        </span>
+                    </div>
+                    <p class="text-gray-600 mb-4">${app.description || 'App description'}</p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        ${(app.tags || []).map(tag => `
+                            <span class="bg-indigo-100 text-indigo-600 px-3 py-1 rounded-full text-xs">${tag}</span>
+                        `).join('')}
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="text-sm text-gray-500">
+                            <i class="fas fa-download mr-1"></i> ${app.downloads || '0'}+ Downloads
+                        </div>
+                        ${hasDownload ? 
+                            `<a href="${app.downloadLink}" target="_blank" class="bg-indigo-600 text-white px-6 py-2 rounded-full hover:bg-indigo-700 transition flex items-center">
+                                <i class="fas fa-download mr-2"></i>Download
+                            </a>` :
+                            `<button class="bg-gray-200 text-gray-600 px-6 py-2 rounded-full cursor-not-allowed flex items-center">
+                                <i class="fas fa-clock mr-2"></i>Soon
+                            </button>`
+                        }
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Show default apps if Firebase fails
+function showDefaultApps() {
+    const container = document.getElementById('appsContainer');
+    container.innerHTML = `
+        <div class="col-span-full text-center py-12">
+            <i class="fas fa-exclamation-circle text-4xl text-yellow-500 mb-4"></i>
+            <p class="text-gray-600">Apps loading failed. Please refresh.</p>
+            <button onclick="loadApps()" class="mt-4 bg-indigo-600 text-white px-6 py-2 rounded-full hover:bg-indigo-700 transition">
+                <i class="fas fa-sync mr-2"></i>Retry
+            </button>
+        </div>
+    `;
+}
+
+// Load apps when page loads
+document.addEventListener('DOMContentLoaded', loadApps);
 
 // ============================================
 // CONSOLE WELCOME MESSAGE

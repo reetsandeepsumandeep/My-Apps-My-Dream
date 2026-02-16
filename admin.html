@@ -101,6 +101,30 @@
                 </button>
             </div>
 
+            <!-- Apps Management Section -->
+            <div class="bg-white rounded-xl shadow overflow-hidden mb-8">
+                <div class="p-6 border-b bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h2 class="text-2xl font-bold">
+                                <i class="fas fa-mobile-alt mr-2"></i>Apps Management
+                            </h2>
+                            <p class="text-white/80 mt-1">Manage your 3 apps - Title, Image URL, Download Link</p>
+                        </div>
+                        <button onclick="openAppModal()" class="bg-white text-indigo-600 px-4 py-2 rounded-lg font-bold hover:bg-gray-100 transition">
+                            <i class="fas fa-plus mr-2"></i>Add App
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="appsList" class="p-6">
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-spinner fa-spin text-3xl mb-2"></i>
+                        <p>Loading apps...</p>
+                    </div>
+                </div>
+            </div>
+
             <!-- Submissions Table -->
             <div class="bg-white rounded-xl shadow overflow-hidden">
                 <div class="overflow-x-auto">
@@ -142,6 +166,24 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     
     <script>
+        // ============================================
+        // AUTHENTICATION CHECK - Must be logged in
+        // ============================================
+        (function checkAuth() {
+            const isAuthenticated = localStorage.getItem('adminAuthenticated') === 'true';
+            const loginTime = localStorage.getItem('adminLoginTime');
+            const oneHour = 3600000; // 1 hour in milliseconds
+            
+            // Check if authenticated and within 1 hour
+            if (!isAuthenticated || !loginTime || (Date.now() - parseInt(loginTime)) > oneHour) {
+                // Clear old auth data
+                localStorage.removeItem('adminAuthenticated');
+                localStorage.removeItem('adminLoginTime');
+                // Redirect to login page
+                window.location.href = 'admin-panel.html';
+            }
+        })();
+
         // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCR4mJrZQNUqF59HNPYKdv_mBYDnBf2t1I",
@@ -326,6 +368,235 @@
 
         // Auto refresh every 30 seconds
         setInterval(loadSubmissions, 30000);
+
+        // ============================================
+        // APPS MANAGEMENT FUNCTIONS
+        // ============================================
+        
+        let editingAppId = null;
+        let allApps = [];
+
+        // Load all apps
+        async function loadApps() {
+            if (!db) return;
+            
+            try {
+                const snapshot = await db.collection('apps').orderBy('order', 'asc').get();
+                allApps = [];
+                snapshot.forEach(doc => {
+                    allApps.push({ id: doc.id, ...doc.data() });
+                });
+                displayApps();
+                console.log('✅ Loaded', allApps.length, 'apps');
+            } catch (error) {
+                console.error('Error loading apps:', error);
+            }
+        }
+
+        // Display apps in list
+        function displayApps() {
+            const container = document.getElementById('appsList');
+            
+            if (allApps.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8 text-gray-500">
+                        <i class="fas fa-box-open text-4xl mb-2"></i>
+                        <p>No apps yet. Click "Add App" to create your first app!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = allApps.map((app, index) => `
+                <div class="flex items-center gap-4 p-4 border rounded-lg mb-4 hover:bg-gray-50">
+                    <div class="w-16 h-16 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
+                        ${app.imageUrl ? 
+                            `<img src="${app.imageUrl}" class="w-full h-full object-cover">` :
+                            `<div class="w-full h-full bg-gradient-to-br ${app.gradient || 'from-indigo-400 to-purple-600'} flex items-center justify-center">
+                                <i class="${app.icon || 'fas fa-mobile-alt'} text-white text-xl"></i>
+                            </div>`
+                        }
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-bold text-gray-800">${app.name}</h3>
+                        <p class="text-sm text-gray-500 truncate">${app.description || 'No description'}</p>
+                        <div class="flex gap-2 mt-1">
+                            <span class="text-xs bg-gray-100 px-2 py-1 rounded">Order: ${app.order || index + 1}</span>
+                            ${app.downloadLink ? '<span class="text-xs bg-green-100 text-green-600 px-2 py-1 rounded">Download Ready</span>' : '<span class="text-xs bg-yellow-100 text-yellow-600 px-2 py-1 rounded">No Link</span>'}
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="editApp('${app.id}')" class="px-3 py-2 bg-blue-100 text-blue-600 rounded hover:bg-blue-200">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button onclick="deleteApp('${app.id}')" class="px-3 py-2 bg-red-100 text-red-600 rounded hover:bg-red-200">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Open modal
+        function openAppModal() {
+            editingAppId = null;
+            document.getElementById('modalTitle').textContent = 'Add New App';
+            document.getElementById('appForm').reset();
+            document.getElementById('appModal').classList.remove('hidden');
+        }
+
+        // Close modal
+        function closeAppModal() {
+            document.getElementById('appModal').classList.add('hidden');
+            editingAppId = null;
+        }
+
+        // Edit app
+        function editApp(id) {
+            const app = allApps.find(a => a.id === id);
+            if (!app) return;
+            
+            editingAppId = id;
+            document.getElementById('modalTitle').textContent = 'Edit App';
+            document.getElementById('appName').value = app.name || '';
+            document.getElementById('appDescription').value = app.description || '';
+            document.getElementById('appImageUrl').value = app.imageUrl || '';
+            document.getElementById('appDownloadLink').value = app.downloadLink || '';
+            document.getElementById('appIcon').value = app.icon || 'fas fa-mobile-alt';
+            document.getElementById('appGradient').value = app.gradient || 'from-indigo-400 to-purple-600';
+            document.getElementById('appTags').value = (app.tags || []).join(', ');
+            document.getElementById('appDownloads').value = app.downloads || '0';
+            document.getElementById('appOrder').value = app.order || 1;
+            
+            document.getElementById('appModal').classList.remove('hidden');
+        }
+
+        // Save app
+        async function saveApp(e) {
+            e.preventDefault();
+            if (!db) return;
+
+            const appData = {
+                name: document.getElementById('appName').value,
+                description: document.getElementById('appDescription').value,
+                imageUrl: document.getElementById('appImageUrl').value,
+                downloadLink: document.getElementById('appDownloadLink').value,
+                icon: document.getElementById('appIcon').value,
+                gradient: document.getElementById('appGradient').value,
+                tags: document.getElementById('appTags').value.split(',').map(t => t.trim()).filter(t => t),
+                downloads: document.getElementById('appDownloads').value,
+                order: parseInt(document.getElementById('appOrder').value) || 1,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            try {
+                if (editingAppId) {
+                    await db.collection('apps').doc(editingAppId).update(appData);
+                    showNotification('App updated successfully!');
+                } else {
+                    appData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    await db.collection('apps').add(appData);
+                    showNotification('App created successfully!');
+                }
+                closeAppModal();
+                loadApps();
+            } catch (error) {
+                console.error('Error saving app:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        // Delete app
+        async function deleteApp(id) {
+            if (!confirm('Are you sure you want to delete this app?')) return;
+            if (!db) return;
+
+            try {
+                await db.collection('apps').doc(id).delete();
+                showNotification('App deleted!');
+                loadApps();
+            } catch (error) {
+                console.error('Error deleting app:', error);
+                alert('Error: ' + error.message);
+            }
+        }
+
+        // Show notification
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+            notification.innerHTML = `<i class="fas fa-check mr-2"></i>${message}`;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        // Load apps on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSubmissions();
+            loadApps();
+        });
     </script>
+
+    <!-- App Modal -->
+    <div id="appModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b">
+                <h3 id="modalTitle" class="text-2xl font-bold text-gray-800">Add New App</h3>
+            </div>
+            <form id="appForm" onsubmit="saveApp(event)" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-gray-700 font-medium mb-1">App Name</label>
+                    <input type="text" id="appName" required class="w-full px-3 py-2 border rounded-lg focus:border-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-medium mb-1">Description</label>
+                    <textarea id="appDescription" rows="2" class="w-full px-3 py-2 border rounded-lg focus:border-indigo-500 outline-none"></textarea>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-medium mb-1">Image URL (from GitHub)</label>
+                    <input type="url" id="appImageUrl" placeholder="https://raw.githubusercontent.com/..." class="w-full px-3 py-2 border rounded-lg focus:border-indigo-500 outline-none">
+                    <p class="text-xs text-gray-500 mt-1">Leave empty to use icon + gradient</p>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-medium mb-1">Download Link (Play Store/App Store)</label>
+                    <input type="url" id="appDownloadLink" placeholder="https://play.google.com/store/apps/..." class="w-full px-3 py-2 border rounded-lg focus:border-indigo-500 outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-1">Icon Class</label>
+                        <input type="text" id="appIcon" value="fas fa-mobile-alt" class="w-full px-3 py-2 border rounded-lg focus:border-indigo-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-1">Gradient</label>
+                        <select id="appGradient" class="w-full px-3 py-2 border rounded-lg focus:border-indigo-500 outline-none">
+                            <option value="from-pink-400 to-purple-600">Pink-Purple</option>
+                            <option value="from-blue-400 to-cyan-600">Blue-Cyan</option>
+                            <option value="from-green-400 to-teal-600">Green-Teal</option>
+                            <option value="from-orange-400 to-red-600">Orange-Red</option>
+                            <option value="from-indigo-400 to-purple-600">Indigo-Purple</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-medium mb-1">Tags (comma separated)</label>
+                    <input type="text" id="appTags" placeholder="Video Editing, Free, Tools" class="w-full px-3 py-2 border rounded-lg focus:border-indigo-500 outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-1">Downloads Count</label>
+                        <input type="text" id="appDownloads" value="25K" class="w-full px-3 py-2 border rounded-lg focus:border-indigo-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-1">Display Order</label>
+                        <input type="number" id="appOrder" value="1" min="1" max="3" class="w-full px-3 py-2 border rounded-lg focus:border-indigo-500 outline-none">
+                    </div>
+                </div>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="closeAppModal()" class="flex-1 px-4 py-2 border rounded-lg hover:bg-gray-50">Cancel</button>
+                    <button type="submit" class="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">Save App</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
